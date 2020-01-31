@@ -5,16 +5,19 @@ by fishguy6564. Credits to algorithms used
 and help received below. 
 
 **Credit:**
+
 Used some algorithms publicly available by Admiral-Fish
 Rafa10 for getting the get heap function to work
 mdbell for noexes and KrankRival for the noexes .nsp port
 
 **Prerequisites:**
+
 Please use by installing python3. 
 Use pip commands to install the following:
 pip install z3-solver
 
 **Current Features:**
+
 $GetSeed - Gets a user's seed and next square/star shiny frame
 by a user passing their encryption constant, pid, and IVs as arguments.
 
