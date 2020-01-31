@@ -7,7 +7,9 @@ and help received below.
 **Credit:**
 
 Used some algorithms publicly available by Admiral-Fish
+
 Rafa10 for getting the get heap function to work
+
 mdbell for noexes and KrankRival for the noexes .nsp port
 
 **Prerequisites:**
@@ -16,7 +18,9 @@ The ability to connect to your switch requires a hacked switch
 and noexes installed. You can download noexes [here](https://github.com/KranKRival/Noexes/releases/tag/1.2)
 
 Please use by installing python3. 
+
 Use pip commands to install the following:
+
 pip install z3-solver
 
 **Current Features:**
