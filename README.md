@@ -6,11 +6,11 @@ and help received below.
 
 **Credit:**
 
-Used some algorithms publicly available by Admiral-Fish
+Used some algorithms publicly available by Admiral-Fish.
 
-Rafa10 for getting the get heap function to work
+Rafa10 for getting the get heap function to work.
 
-mdbell for noexes and KrankRival for the noexes .nsp port
+mdbell for noexes and KrankRival for the noexes .nsp port.
 
 **Prerequisites:**
 
@@ -35,9 +35,9 @@ $GetPoke - Requires a modded switch with noexes installed.
 It obtains the Pokemon data from a player who offers their pokemon
 for trade similar to dudu bot and reports it in the discord chat.
 
-$logout - For the admin only. Will turn off the bot for testing
+$logout - For the admin only. Will turn off the bot for testing.
 
 **Planned Features:**
-- Automation similar to dudu bot so users don't have to manually initiate trades
+- Automation similar to dudu bot so users don't have to manually initiate trades.
 - Dump .pk8 file from offered pokemon from trade and send it via discord.
-- Check a offered Pokemon's IVs
+- Check a offered Pokemon's IVs.
