@@ -10,7 +10,7 @@ Used some algorithms publicly available by Admiral-Fish.
 
 Rafa10 for getting the get heap function to work.
 
-mdbell for noexes and KrankRival for the noexes .nsp port.
+mdbell for noexes and KrankRival for the noexes sysmodule.
 
 **Prerequisites:**
 
