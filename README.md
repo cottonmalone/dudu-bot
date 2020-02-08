@@ -45,9 +45,9 @@ must already have a cfw installed, preferrably atmosphere. Olliz0r has
 instructions on how to setup sys-botbase in the readme of his github page.
 Please check DuduClient.py, bot.py, and RaidCommands.py for comments on what
 needs to be filled in. Once all of that is done, double click run.bat and if
-all goes well, DuduClient should shoot out a message saying "Awaiting..." if 
-successfully connected to your switch. bot.py should show a message that prints
-out your basic discord info.
+all goes well, DuduClient should shoot out a message saying "Awaiting... Inputs" 
+if successfully connected to your switch. bot.py should show a message that 
+prints out your basic discord info.
 
 **Questions?**
 
