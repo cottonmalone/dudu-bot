@@ -54,6 +54,12 @@ prints out your basic discord info.
 If you have any questions, please contact me on discord. I will be more than
 happy to help troubleshoot any problems. My discord is: fishguy6564#1228
 
+**Known Bugs**
+- Linkcode isn't dm'd for the first seed check when the bot is first booted up
+it seems. I'll work on a patch as soon as possible, but for now, devs can 
+simply invoke the first $CheckMySeed and let the bot time itself out.
+Any searches after that will properly dm the unique code to users.
+
 **Planned Features:**
 - Dump .pk8 file from offered pokemon from trade and send it via discord.
 - Check a offered Pokemon's IVs.
