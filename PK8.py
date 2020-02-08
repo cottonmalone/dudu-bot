@@ -29,6 +29,9 @@ class PK8:
             self.data[i] = pkmWord & 0xFF
             i += 2
 
+    def getData(self):
+        return self.data
+
     def getBlockPosition(self, index):
         blocks = [0, 1, 2, 3,
                 0, 1, 3, 2,
@@ -134,3 +137,22 @@ class PK8:
 
     def getPID(self):
         return int(struct.unpack("I", bytes(self.data[0x1C : 0x1C + 4]))[0])
+
+    def getSID(self):
+        return int(struct.unpack("H", bytes(self.data[0xE : 0xE + 2]))[0])
+
+    def getTID(self):
+        return int(struct.unpack("H", bytes(self.data[0xC : 0xC + 2]))[0])
+
+    def getPSV(self):
+        pid = self.getPID()
+        return((pid >> 16 ^ (pid & 0xFFFF)) >> 4)
+
+    def getTSV(self):
+        return ((self.getTID() ^ self.getSID()) >> 4)
+
+    def isShiny(self):
+        return self.getPSV() == self.getTSV()
+
+    def isEgg(self):
+        return ((self.getIV32() >> 30) & 1) == 1
