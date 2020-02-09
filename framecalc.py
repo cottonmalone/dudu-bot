@@ -26,44 +26,37 @@ class framecalc:
 	def isHiddenAbility(self, rng):
 		return rng.nextInt((3 & 0xFFFFFFFF), (3 & 0xFFFFFFFF))
 
-	def getStarShinyFrame(self):
+	def getShinyFrames(self):
 		seed = self.seed
 		rng = XoroShiro(seed)
-		i = 0;
+		starFrame = -1
+		squareFrame = -1
+
+		i = 0
 		while True:
 			a = rng.nextInt(0xFFFFFFFF, 0xFFFFFFFF)
 			SIDTID = rng.nextInt(0xFFFFFFFF, 0xFFFFFFFF)
 			PID = rng.nextInt(0xFFFFFFFF,0xFFFFFFFF)
 
 			shinyType = self.getShinyType(PID, SIDTID)
-			if shinyType == 1:
-				return i#, self.isHiddenAbility(rng)
+
+			if starFrame == -1:
+				if shinyType == 1:
+					starFrame = i
+
+			if squareFrame == -1:
+				if shinyType == 2:
+					squareFrame = i
+
 			rng.reset(seed)
 			seed = rng.next()
 			rng.reset(seed)
 			i += 1
 
-			if i >= 10000:
-				return -1#, -1
-
-	def getSquareShinyFrame(self):
-		seed = self.seed
-		rng = XoroShiro(seed)
-		i = 0;
-		while True:
-			a = rng.nextInt(0xFFFFFFFF, 0xFFFFFFFF)
-			SIDTID = rng.nextInt(0xFFFFFFFF, 0xFFFFFFFF)
-			PID = rng.nextInt(0xFFFFFFFF,0xFFFFFFFF)
-
-			shinyType = self.getShinyType(PID, SIDTID)
-			if shinyType == 2:
-				return i#, self.isHiddenAbility(rng)
-			rng.reset(seed)
-			seed = rng.next()
-			rng.reset(seed)
-			i += 1
+			if starFrame != -1 and squareFrame != -1:
+				return starFrame, squareFrame
 
 			if i >= 10000:
-				return -1#, -1
+				return starFrame, squareFrame
 
 		
