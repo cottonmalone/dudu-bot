@@ -61,11 +61,11 @@ def checkSearchStatus():
 			fileIn.seek(0)
 			fileIn.write(bytes(outData))
 			fileIn.close()
-			return 1
+			return True
 		
-		return 0
+		return False
 	except:
-		return 0
+		return False
 
 def getCodeString():
 	while True:
