@@ -205,7 +205,7 @@ while True:
                 memCheck = s.recv(689)
                 memCheck = binascii.unhexlify(memCheck[0:-1])
                 memCheck = int(struct.unpack("I", memCheck[0:4])[0])
-                #print(memCheck)
+
                 end = time.time()
                 if memCheck != 0:
                     canTrade = True
@@ -231,7 +231,7 @@ while True:
 
                 ec = decryptor.getEncryptionConstant()
                 pid = decryptor.getPID()
-                #print(str(pk8))
+                
 
                 pk8Out = open("out.pk8", "wb")
                 pk8Out.write(bytes(pk8))
