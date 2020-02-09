@@ -2,18 +2,27 @@
 class ArrayQueue:
 	def __init__(self):
 		self.data = []
-
-	def isEmpty(self):
-		return self.data == []
+		self.sz = 0
 
 	def enqueue(self, person):
+		self.sz += 1
 		self.data.insert(0, person)
 
+	def availableSpace(self):
+		return self.sz < 1
+
 	def dequeue(self):
+		self.sz -= 1
 		return self.data.pop()
 
 	def size(self):
-		return len(self.data)
+		return self.sz
+
+	def isEmpty(self):
+		return self.sz == 0
+
+	def getQueue(self):
+		return self.data
 
 	def contains(self, person):
 		s = self.size()
@@ -23,4 +32,3 @@ class ArrayQueue:
 				return True
 			i += 1
 		return False
-
