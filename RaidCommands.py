@@ -8,7 +8,9 @@ from Person import *
 from ArrayQueue import *
 import time
 
-q = ArrayQueue()
+# 300 with the current queue and the reporting system
+# will make sure everyone has a place and can see when they will be served
+q = ArrayQueue(300)
 
 class RaidCommands(commands.Cog):
 	def __init__(self, client):
