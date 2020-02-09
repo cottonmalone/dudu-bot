@@ -3,7 +3,7 @@ from discord.ext import commands
 import asyncio
 import sys
 
-TOKEN = 'INPUT YOUR BOT TOKKEN HERE'
+TOKEN = 'YOUR TOKEN HERE'
 
 client = commands.Bot(command_prefix = '$')
 client.remove_command('help')
@@ -30,7 +30,7 @@ async def on_message(message):
 #Please put the admin's discord ID where indicated
 @client.command()
 async def logout(ctx):
-	if ctx.message.author.id in [ADMINS DISCORD ID AS INT]:
+	if ctx.message.author.id in [ADMinS DISCORD ID AS INT]:
 		await ctx.send('```Shutting down...```')
 		await client.logout()
 	else:
@@ -39,7 +39,7 @@ async def logout(ctx):
 #Sends greet command
 @client.command()
 async def greet(ctx):
-	await ctx.send("Hello everyone! I am <placeholder> and I'm here to assist you :)")
+	await ctx.send("Hello everyone! I am <Placeholder> and I'm here to assist you :)")
 
 @client.command()
 async def load(extension):
@@ -64,5 +64,4 @@ if __name__ == '__main__':
 		except Exception as error:
 			print('{} cannot be loaded. [{}]'.format(extension, error))
 
-	#client.loop.create_task(test())
 	client.run(TOKEN)
