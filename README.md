@@ -38,6 +38,8 @@ $greet - Sends a cute message depending on what the developer sets it to.
 
 $CheckQueueSize - Reports the amount of people currently in the queue
 
+$CheckMyPlace - Reports the current position of the sender in the queue system
+
 $logout - For the admin only. Will turn off the bot for testing.
 
 **How to Run**

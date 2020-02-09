@@ -25,10 +25,13 @@ class ArrayQueue:
 		return self.data
 
 	def contains(self, person):
+		return self.indexOf(person) >= 0
+
+	def indexOf(self, person):
 		s = self.size()
 		i = 0
 		while i < s:
 			if self.data[i].id == person.id:
-				return True
+				return i
 			i += 1
-		return False
+		return -1
