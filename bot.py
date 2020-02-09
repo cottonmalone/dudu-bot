@@ -24,7 +24,8 @@ async def on_message(message):
 	channel = message.channel
 	if message.guild is None:
 		await message.channel.send("Hey there!")
-	await client.process_commands(message)
+	else:
+	    await client.process_commands(message)
 
 #Command used for bot admin to turn their bot off
 #Please put the admin's discord ID where indicated
