@@ -19,86 +19,117 @@ class RaidCommands(commands.Cog):
 		self.person = None
 		self.idInt = None
 
-	#Queues up person if they are not already in the queue to initiate searching
+	#Clears instance variables
+	def clearData(self):
+		self.userChannel = None
+		self.user = None
+		self.id = None
+		self.idInt = None
+		self.person = None
+
+	#Generates the appropriate string based on your star and square frames
+	def generateFrameString(self, starFrame, squareFrame):
+		starFrameMessage = ""
+		if starFrame != -1:
+			starFrameMessage = str(starFrame + 1)
+		else:
+			starFrameMessage = "Shiny frame greater than 10000! Try again :("
+
+		squareFrameMessage = ""
+		if squareFrame != -1:
+			squareFrameMessage = str(squareFrame + 1)
+		else:
+			squareFrameMessage = "Shiny frame greater than 10000! Try again :("
+
+		return starFrameMessage, squareFrameMessage
+
+	#Reports how many people are in the queue
+	@commands.command(name="CheckQueueSize")
+	async def checkQueueSize(self, ctx):
+		await ctx.send("Current queue size is: " + str(q.size()))
+
 	@commands.command(name="CheckMySeed")
 	async def checkMySeed(self, ctx):
 		global q
-		if ctx.message.guild != None:
-			id = ctx.message.author.id
-			userChannel = ctx.message.channel
-			user = ctx.message.author
-			p = Person(id, userChannel, user)
-			
-			if not q.contains(p) and self.idInt != id:
-				size = q.size()
-				if size <= 10 and self.person == None:
-					q.enqueue(p)
-					await ctx.send("Lanturn bot dispatched, I will ping you once I start searching! There are currently no people ahead of you")
-				elif size <= 10 and self.person.getID() != id:
-					q.enqueue(p)
-					prsn = ""
-					pre = ""
-					if q.size() == 1:
-						prsn = " person "
-						pre = " is "
-					else:
-						prsn = " people "
-						pre = " are "
-					await ctx.send("Lanturn bot dispatched, I will ping you once I start searching! There" + pre + "currently " + str(q.size()) + prsn + "waiting in front of you.")
-				elif size <= 10 and self.person.getID() == id:
-					await ctx.send("You are already being served, please wait!")
-				else:
-					await ctx.send("The queue is already full! Please wait a while before trying to register.")
-			else:
-				await ctx.send("You are already in line! Please wait until I ping you for your turn.")
 
-	#Handles all of the dudu logic. Very messy, but it does work well. I suggest not messing unless you know what you're doing
+		if q.availableSpace():
+			if ctx.message.guild != None:
+
+				#Constructs person object for queue
+				id = ctx.message.author.id
+				p = Person(id, ctx.message.channel, ctx.message.author)
+
+				#Checks if queue already contains assets from the constructed person object
+				if not q.contains(p) and self.idInt != id:
+
+					#Checks if anyone is currently being served
+					if self.person == None:
+						q.enqueue(p)
+						await ctx.send("<placeholder> bot dispatched, I will ping you once I start searching! There are currently no people ahead of you")
+
+					#Checks if you are already being served
+					elif self.person.getID() != id:
+						q.enqueue(p)
+
+						#for correct grammar
+						prsn = ""
+						pre = ""
+						if q.size() == 1:
+							prsn = " person "
+							pre = " is "
+						else:
+							prsn = " people "
+							pre = " are "
+
+						await ctx.send("<placeholder> bot dispatched, I will ping you once I start searching! There" + pre + "currently " + str(q.size()) + prsn + "waiting in front of you.")
+					elif self.person.getID() == id:
+						await ctx.send("You are already being served, please wait!")
+				else:
+					await ctx.send("You are already in line! Please wait until I ping you for your turn.")
+		else:
+			await ctx.send("The queue is already full! Please wait a while before trying to register.")
+
+	#Main loop that is sending and receiving data from the dudu client
 	@tasks.loop(seconds=0.1)
 	async def checkDataReady(self):
 		global q
-		if not q.isEmpty() and self.person == None:
+
+		#If there is no person being served and the queue is not empty, get the next person in the queue
+		#and start the dudu client
+		if self.person == None and not q.isEmpty():
 			self.person = q.dequeue()
 			initializeDuduClient()
-		if checkSearchStatus() == 1 and self.person != None:
+
+		#Checks if lanturn is now searching and if there is a person being served
+		if checkSearchStatus() and self.person != None:
+
+			#assigns assets based on the person being served
 			self.userChannel = self.person.getUserChannel()
 			self.user = self.person.getUser()
 			self.id = self.person.getIDString()
 			self.idInt = self.person.getID()
 			
+			#Gets link code from text file
 			code = getCodeString()
 
-			#Change <placeholder> with the IGN of the switch you're using
-			await self.userChannel.send(self.id + " I am now searching! I have sent your unique link code as a private message. My in game name is: <placeholder>")
+			await self.userChannel.send(self.id + " I am now searching! I have sent your unique link code as a private message. My in game name is: <placeholder>.")
 			await self.user.send("```python\nHi there! Your private link code is: " + code + "\nPlease use it to match up with me in trade!```")
 
+		#Check if user has timed out and checks if a valid userChannel is present
 		if checkTimeOut() and self.userChannel != None:
-			await self.userChannel.send(self.id + " You have been timed out! You either took too long to respond or you lost connection. You have been dequeued.")
-			self.userChannel = None
-			self.user = None
-			self.id = None
-			self.idInt = None
-			self.person = None
+			await self.userChannel.send(self.id + " You have been timed out! You either took too long to respond or you lost connection. People remaining in line: " + str(q.size()))
+			self.clearData()
 
-		if checkDuduStatus() == False and self.userChannel != None:
+		#Check if a valid user channel is present and if the dudu client is still running
+		if self.userChannel != None and not checkDuduStatus():
 			time.sleep(2.0)
 			ec, pid, seed, ivs, iv = getPokeData()
 
 			if seed != -1:
 				calc = framecalc(seed)
-				starFrame = calc.getStarShinyFrame()
-				squareFrame = calc.getSquareShinyFrame()
+				starFrame, squareFrame = calc.getShinyFrames()
 
-				starFrameMessage = ""
-				if starFrame != -1:
-					starFrameMessage = str(starFrame + 1)
-				else:
-					starFrameMessage = "Shiny frame greater than 10000! Try again :("
-
-				squareFrameMessage = ""
-				if squareFrame != -1:
-					squareFrameMessage = str(squareFrame + 1)
-				else:
-					squareFrameMessage = "Shiny frame greater than 10000! Try again :("
+				starFrameMessage, squareFrameMessage = self.generateFrameString(starFrame, squareFrame)
 
 				await self.userChannel.send(self.id + "```python\nEncryption Constant: " + str(hex(ec)) +
 					"\nPID: " + str(hex(pid)) +
@@ -107,24 +138,18 @@ class RaidCommands(commands.Cog):
 					"\nIVs: " + str(iv[0]) + "/" + str(iv[1]) + "/" + str(iv[2]) + "/" + str(iv[3]) + "/" + str(iv[4]) + "/" + str(iv[5]) + 
 					"\nStar Shiny at Frame: " + starFrameMessage +
 					"\nSquare Shiny at Frame: " + squareFrameMessage + "```")
-				self.userChannel = None
-				self.user = None
-				self.id = None
-				self.person = None
-				self.idInt = None
+
+				#outputs how many people remain in line
+				time.sleep(1.0)
+				await self.userChannel.send("People remaining in line: " + str(q.size()))
+				self.clearData()
 			else:
-				await self.userChannel.send("Invalid seed. Please try a different Pokemon.")
-				self.userChannel = None
-				self.user = None
-				self.id = None
-				self.person = None
-				self.idInt = None
+				await self.userChannel.send("Invalid seed. Please try a different Pokemon. People remaining in line: " + str(q.size()))
+				self.clearData()
 
 			
 		#await ctx.send("Invoked")
 
-	#This is for people who have their encryption constant, IVs, and pid.
-	#This will derive a seed and frame data based on that info
 	@commands.command(name='GetSeed')
 	async def obtainSeed(self, ctx, arg1=None, arg2=None, arg3=None):
 		try:
@@ -139,27 +164,15 @@ class RaidCommands(commands.Cog):
 
 			#Calculate star and square shiny frames based on seed
 			calc = framecalc(seed)
-			starFrame = calc.getStarShinyFrame()
-			squareFrame = calc.getSquareShinyFrame()
+			starFrame, squareFrame = calc.getShinyFrames()
 
 			#Format message based on result and output
-			starFrameMessage = ""
-			if starFrame != -1:
-				starFrameMessage = str(starFrame + 1)
-			else:
-				starFrameMessage = "Shiny frame greater than 10000! Try again :("
-
-			squareFrameMessage = ""
-			if squareFrame != -1:
-				squareFrameMessage = str(squareFrame + 1)
-			else:
-				squareFrameMessage = "Shiny frame greater than 10000! Try again :("
+			starFrameMessage, squareFrameMessage = self.generateFrameString(starFrame, squareFrame)
 
 			await ctx.send("```python\nRaid seed: " + str(seed) + "\nAmount of IVs: " + str(ivs) + "\nStar Shiny at Frame: " + starFrameMessage + "\nSquare Shiny at Frame: " + squareFrameMessage + "```")
 		except:
 			await ctx.send("Please format your input as: ```$GetSeed [Encryption Constant] [PID] [IVs as HP/Atk/Def/SpA/SpD/Spe]```")
 
-	#Will get a user's frame data based on their seed
 	@commands.command(name='GetFrameData')
 	async def obtainFrameData(self, ctx, arg1=None):
 		try:
@@ -168,21 +181,10 @@ class RaidCommands(commands.Cog):
 
 			#Calculate star and square shiny frames based on seed
 			calc = framecalc(seed)
-			starFrame= calc.getStarShinyFrame()
-			squareFrame= calc.getSquareShinyFrame()
+			starFrame, squareFrame = calc.getShinyFrames()
 
 			#Format message based on result and output
-			starFrameMessage = ""
-			if starFrame != -1:
-				starFrameMessage = str(starFrame + 1)
-			else:
-				starFrameMessage = "Shiny frame greater than 10000! Try again :("
-
-			squareFrameMessage = ""
-			if squareFrame != -1:
-				squareFrameMessage = str(squareFrame + 1)
-			else:
-				squareFrameMessage = "Shiny frame greater than 10000! Try again :("
+			starFrameMessage, squareFrameMessage = self.generateFrameString(starFrame, squareFrame)
 
 			await ctx.send("```python\nFor Seed: " + str(seed) + "\nStar Shiny at Frame: " + starFrameMessage + "\nSquare Shiny at Frame: " + squareFrameMessage + "```")
 		except:
