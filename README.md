@@ -36,6 +36,8 @@ do not trash any files when downloading them.
 
 $greet - Sends a cute message depending on what the developer sets it to.
 
+$CheckQueueSize - Reports the amount of people currently in the queue
+
 $logout - For the admin only. Will turn off the bot for testing.
 
 **How to Run**
@@ -51,17 +53,24 @@ prints out your basic discord info.
 
 Want to see it in action? Check out the demo video [here](https://www.youtube.com/watch?v=yDIYqYmnV3Y)
 
+**Important things to note**
+- This is calibrated for Pokemon Sword and Shield in English. Other languages
+may have more dialogue in certain parts and will need to be recalibrated.
+- Text speed must be set to the fastest setting in order to keep the timing of
+the button inputs from the dudu client.
+- Using a modded switch online CAN get you banned. I am not responsible if you
+somehow do get banned. You use this at your own risk.
+
 **Questions?**
 
 If you have any questions, please contact me on discord. I will be more than
 happy to help troubleshoot any problems. My discord is: fishguy6564#1228
 
-
 **Known Bugs**
-- Linkcode isn't dm'd for the first seed check when the bot is first booted up
-it seems. I'll work on a patch as soon as possible, but for now, devs can 
-simply invoke the first $CheckMySeed and let the bot time itself out.
-Any searches after that will properly dm the unique code to users.
+- If you have a bad connection buttons inputs can be lost thus causing a 
+desync which screws up the sequence of events.
+- Docking your switch while the bot is sending inputs can cause the inputs
+to lose their pacing and break sequence.
 
 **Planned Features:**
 - Dump .pk8 file from offered pokemon from trade and send it via discord.
