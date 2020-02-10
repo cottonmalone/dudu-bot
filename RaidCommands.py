@@ -10,7 +10,10 @@ import time
 
 # 300 with the current queue and the reporting system
 # will make sure everyone has a place and can see when they will be served
-q = ArrayQueue(300)
+# q = ArrayQueue(300)
+
+# until possible merge and improvement, setting it to 20 as from the previous commits
+q = ArrayQueue(20)
 
 class RaidCommands(commands.Cog):
 	def __init__(self, client):

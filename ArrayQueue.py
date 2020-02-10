@@ -1,6 +1,6 @@
 
 class ArrayQueue:
-	def __init__(self, capacity = 50):
+	def __init__(self, capacity = 20):
 		self._data = []
 		self._size = 0
 		self._capacity = capacity
