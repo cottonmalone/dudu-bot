@@ -8,8 +8,9 @@ class ArrayQueue:
 		self.sz += 1
 		self.data.insert(0, person)
 
+	#return self.sz < max queue size
 	def availableSpace(self):
-		return self.sz < 1
+		return self.sz < 20
 
 	def dequeue(self):
 		self.sz -= 1
