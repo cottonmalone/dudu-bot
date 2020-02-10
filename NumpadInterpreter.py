@@ -38,8 +38,6 @@ def constructString(i, j, desiredLocation):
 		j = 0 - j
 		Signj = True
 
-	print("i: " + str(i) + "j: " + str(j))
-
 	if Signi == True:
 		x = 0
 		while x < i:
@@ -72,14 +70,11 @@ def getButtons(input):
 	if input == None:
 		input = random.randint(4510, 4520)
 
-	#Change these bounds for your own bounds
-	#Don't be greedy, please use only 10-20 or 50 if REALLY needed
 	thousands = int(input / 1000)
 	hundreds = int((input / 100) % 10)
 	tens = int((input / 10) % 10)
 	ones = input % 10
 
-	#Change these bounds for your own bounds
 	if thousands == 0:
 		thousands = random.randint(4,4)
 
