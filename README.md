@@ -18,6 +18,8 @@ and sys-botbase installed. You can download sys-botbase [here](https://github.co
 
 Please use by installing python3. 
 
+You must have the latest discord python api installed
+
 Use pip commands to install the following:
 
 pip install z3-solver
@@ -67,10 +69,7 @@ If you have any questions, please contact me on discord. I will be more than
 happy to help troubleshoot any problems. My discord is: fishguy6564#1228
 
 **Known Bugs**
-- If you have a bad connection buttons inputs can be lost thus causing a 
-desync which screws up the sequence of events.
-- Docking your switch while the bot is sending inputs can cause the inputs
-to lose their pacing and break sequence.
+- None for now. Report any to my discord.
 
 **Planned Features:**
 - Dump .pk8 file from offered pokemon from trade and send it via discord.
