@@ -24,22 +24,23 @@ async def on_message(message):
 	channel = message.channel
 	if message.guild is None:
 		await message.channel.send("Hey there!")
-	await client.process_commands(message)
+	else:
+	    await client.process_commands(message)
 
 #Command used for bot admin to turn their bot off
 #Please put the admin's discord ID where indicated
 @client.command()
 async def logout(ctx):
-	if ctx.message.author.id in [ADMinS DISCORD ID AS INT]:
+	if ctx.message.author.id in [ADMINS DISCORD ID AS INT]:
 		await ctx.send('```Shutting down...```')
 		await client.logout()
 	else:
 		await ctx.send('Nice try jackass!')
-
+		
 #Sends greet command
 @client.command()
 async def greet(ctx):
-	await ctx.send("Hello everyone! I am <Placeholder> and I'm here to assist you :)")
+	await ctx.send("Hello everyone! I am <placeholder> and I'm here to assist you :)")
 
 @client.command()
 async def load(extension):
@@ -57,6 +58,11 @@ async def unload(extension):
 	except Exception as error:
 		print('{} cannot be unloaded. [{}]'.format(extension, error))
 
+async def test():
+	while True:
+		print("Hello!")
+		await asyncio.sleep(1)
+
 if __name__ == '__main__':
 	for extension in extensions:
 		try:
@@ -64,4 +70,5 @@ if __name__ == '__main__':
 		except Exception as error:
 			print('{} cannot be loaded. [{}]'.format(extension, error))
 
+	#client.loop.create_task(test())
 	client.run(TOKEN)

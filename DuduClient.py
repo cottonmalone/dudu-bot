@@ -20,23 +20,70 @@ import struct
 from PK8 import *
 from NumpadInterpreter import *
 
+
 #Get yuor switch IP from the system settings under the internet tab
 #Should be listed under "Connection Status" as 'IP Address'
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(("YOUR SWITCH IP HERE", 6000))
+s.connect(("10.0.0.90", 6000))
 code = ""
-
-def bytesToInt(bytedata, length):
-        data = list()
-        j = 0
-        while j < length:
-            data.append(bytedata[j])
-            j += 1
-        return data
 
 def sendCommand(s, content):
     content += '\r\n' #important for the parser on the switch side
     s.sendall(content.encode())
+
+#New interpreter for new packet structure
+def bytesToInt(bytedata, length):
+        data = list()
+        j = 0
+        i = 0
+        while j < length:
+            if bytedata[j] == 0x0A:
+                break
+            digit = str(chr(bytedata[i])) + str(chr(bytedata[i+1]))
+            data.append(int(digit, 16))
+            j += 1
+            i += 2
+
+        return data
+
+#New interpreter for new packet structure
+def convertToString(arr):
+    size = len(arr)
+    i = 0
+    accumulator = ""
+    while i < size:
+        accumulator = accumulator + str(chr(arr[i]))
+        i += 1
+
+    return accumulator
+
+#New interpreter for new packet structure
+def convertToBytes(arr):
+    size = len(arr)
+    i = 0
+    accumulator = ""
+    while i < size:
+        if arr[i] == 0xA:
+            break
+        accumulator = accumulator + str(chr(arr[i]))
+        i += 1
+
+    return accumulator
+
+#For the new sys-botbase
+#Allows for faster and more reliable inputs
+def sendCmdHelper(s, cmd):
+    sendCommand(s, cmd)
+    time.sleep(0.5)
+    echo = s.recv(689)
+    echo = convertToString(echo[0:-2])
+    print(str(echo))
+    #If response not received, try again
+    #If received, go to the next button
+    while echo != cmd:
+        #sendCommand(s, cmd)
+        echo = s.recv(689)
+        echo = convertToString(echo[0:-2])
 
 #Cleans out the file relied for communication
 def cleanEnvironment():
@@ -63,40 +110,40 @@ def interpretStringList(arr):
     length = len(arr)
     i = 0
     while i < length:
-        sendCommand(s, arr[i])
+        sendCmdHelper(s, arr[i])
         i+=1
-        time.sleep(2.0)
+        time.sleep(0.5)
 
 #Calibrated for games set to english
 #Will exit the trade once the timeout period is reached
 def timeOutTradeSearch():
-    sendCommand(s, "click Y")
-    time.sleep(1.0)
-    sendCommand(s, "click A");
-    time.sleep(1.0)
-    sendCommand(s, "click A");
-    time.sleep(1.5)
-    sendCommand(s, "click A");
-    time.sleep(1.5)
-    sendCommand(s, "click A");
-    time.sleep(1.5)
-    sendCommand(s, "click A");
-    time.sleep(1.5)
+    sendCmdHelper(s, "click Y")
+    time.sleep(0.5)
+    sendCmdHelper(s, "click A")
+    time.sleep(0.5)
+    sendCmdHelper(s, "click A")
+    time.sleep(0.5)
+    sendCmdHelper(s, "click A")
+    time.sleep(0.5)
+    sendCmdHelper(s, "click A")
+    time.sleep(0.5)
+    sendCmdHelper(s, "click A")
+    time.sleep(0.5)
 
     #uncomment if you are using in Japanese
-    #sendCommand(s, "click A");
-    #time.sleep(1.5)
-    sendCommand(s, "click B");
-    time.sleep(1.5)
-    sendCommand(s, "click B");
-    time.sleep(1.5)
+    #sendCmdHelper(s, "click A")
+    #time.sleep(0.5)
+    sendCmdHelper(s, "click B")
+    time.sleep(0.5)
+    sendCmdHelper(s, "click B")
+    time.sleep(0.5)
 
 #Exits trade if a disconnection occured
 #or if the player refused to input a pokemon
 def exitTrade():
-    sendCommand(s, "click B")
+    sendCmdHelper(s, "click B")
     time.sleep(1.0)
-    sendCommand(s, "click A")
+    sendCmdHelper(s, "click A")
     time.sleep(1.0)
 
 #Calibrated for games set to english
@@ -105,20 +152,20 @@ def initiateTrade():
     global code
 
     #Gets to the code input menu
-    sendCommand(s, "click Y")
-    time.sleep(1.0)
-    sendCommand(s, "click A");
-    time.sleep(1.0)
-    sendCommand(s, "click DDOWN")
-    time.sleep(2.5)
-    sendCommand(s, "click A")
-    time.sleep(1.5)
-    sendCommand(s, "click A")
-    time.sleep(1.5)
+    sendCmdHelper(s, "click Y")
+    time.sleep(0.5)
+    sendCmdHelper(s, "click A");
+    time.sleep(0.5)
+    sendCmdHelper(s, "click DDOWN")
+    time.sleep(0.5)
+    sendCmdHelper(s, "click A")
+    time.sleep(0.5)
+    sendCmdHelper(s, "click A")
+    time.sleep(0.5)
 
     #uncomment if you are using in Japanese
-    #sendCommand(s, "click A")
-    #time.sleep(1.5)
+    #sendCmdHelper(s, "click A")
+    #time.sleep(0.5)
 
 
     #Get passcode button sequence and input them
@@ -128,32 +175,45 @@ def initiateTrade():
     interpretStringList(datalist)
 
     #Confirm passcode and exit the menu
-    sendCommand(s, "click PLUS")
-    time.sleep(2.0)
-    sendCommand(s, "click A")
-    time.sleep(1.5)
-    sendCommand(s, "click A")
-    time.sleep(1.5)
-    sendCommand(s, "click A")
-    time.sleep(1.5)
-    sendCommand(s, "click A")
-    time.sleep(1.5)
+    sendCmdHelper(s, "click PLUS")
+    time.sleep(0.5)
+    sendCmdHelper(s, "click A")
+    time.sleep(0.5)
+    sendCmdHelper(s, "click A")
+    time.sleep(0.5)
+    sendCmdHelper(s, "click A")
+    time.sleep(0.5)
+    sendCmdHelper(s, "click A")
+    time.sleep(0.5)
 
     #Just to be safe since this is a very important part
     sendCommand(s, f"poke 0x2E32209A 0x00000000")
     time.sleep(0.5)
+    s.recv(689)
     sendCommand(s, f"poke 0x2E32209A 0x00000000")
     time.sleep(0.5)
+    s.recv(689)
     sendCommand(s, f"poke 0x2E322064 0x00000000")
     time.sleep(0.5)
+    s.recv(689)
     sendCommand(s, f"poke 0x2E322064 0x00000000")
     time.sleep(0.5)
+    s.recv(689)
 
 #Start up program and clean up necessary files
 print("Cleaning environment...")
 cleanEnvironment()
 print("Environment cleaned!")
+
+#Has the bot echo last command
+sendCommand(s, "configure echoCommands 1")
+time.sleep(1.0)
+s.recv(689)
+
 print("Awaiting inputs...")
+
+
+
 while True:
     fileIn = open("communicate.bin", "rb")
     fileIn.seek(0)
@@ -161,6 +221,7 @@ while True:
     
     if tradeState == 1:
         print("Bot initialized!")
+        print("Button Sequence:")
         fileIn.close()
         initiateTrade()
 
@@ -185,8 +246,7 @@ while True:
             sendCommand(s, "peek 0x2E322064 4")
             time.sleep(0.5)
             tradeCheck = s.recv(689)
-            tradeCheck = binascii.unhexlify(tradeCheck[0:-1])
-            tradeCheck = int(struct.unpack("I", tradeCheck[0:4])[0])
+            tradeCheck = int(convertToBytes(tradeCheck), 16)
             end = time.time()
             if tradeCheck != 0:
                 print("Trade Started!")
@@ -203,9 +263,8 @@ while True:
                 sendCommand(s, "peek 0x2E32209A 4")
                 time.sleep(0.5)
                 memCheck = s.recv(689)
-                memCheck = binascii.unhexlify(memCheck[0:-1])
-                memCheck = int(struct.unpack("I", memCheck[0:4])[0])
-
+                memCheck = int(convertToBytes(memCheck), 16)
+                #print(memCheck)
                 end = time.time()
                 if memCheck != 0:
                     canTrade = True
@@ -223,15 +282,16 @@ while True:
                 time.sleep(0.5)
 
                 ek8 = s.recv(689)
-                ek8 = binascii.unhexlify(ek8[0:-1])
+                #ek8 = binascii.unhexlify(ek8[0:-1])
+                ##print("Received data: " + str(ek8))
                 data = bytesToInt(ek8, 0x148)
+                ##print("Encrypted Data: " + str(data))
                 decryptor = PK8(data)
                 decryptor.decrypt()
                 pk8 = decryptor.getData()
 
                 ec = decryptor.getEncryptionConstant()
                 pid = decryptor.getPID()
-                
 
                 pk8Out = open("out.pk8", "wb")
                 pk8Out.write(bytes(pk8))
@@ -248,5 +308,5 @@ while True:
                 print("Encryption Constant: " + str(hex(ec)))
                 print("pid: " + str(hex(pid)))
 
-        print("Awaiting...")
+        print("Awaiting inputs...")
     time.sleep(1.0)

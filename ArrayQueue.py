@@ -9,6 +9,7 @@ class ArrayQueue:
 		self._size += 1
 		self._data.insert(0, person)
 
+	#return self.sz < max queue size
 	def availableSpace(self):
 		return self._size < self.capacity()
 

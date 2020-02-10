@@ -68,6 +68,7 @@ class RaidCommands(commands.Cog):
 		global q
 
 		if q.availableSpace():
+			print("Invoked by: " + str(ctx.message.author) + " in: " + str(ctx.message.guild))
 			if ctx.message.guild != None:
 
 				#Constructs person object for queue
@@ -80,7 +81,7 @@ class RaidCommands(commands.Cog):
 					#Checks if anyone is currently being served
 					if self.person == None:
 						q.enqueue(p)
-						await ctx.send("<placeholder> bot dispatched, I will ping you once I start searching! There are currently no people ahead of you")
+						await ctx.send("<@"+str(id)+">"+" <placeholder> bot dispatched, I will ping you once I start searching! There are currently no people ahead of you")
 
 					#Checks if you are already being served
 					elif self.person.getID() != id:
@@ -96,7 +97,7 @@ class RaidCommands(commands.Cog):
 							prsn = " people "
 							pre = " are "
 
-						await ctx.send("<placeholder> bot dispatched, I will ping you once I start searching! There" + pre + "currently " + str(q.size()) + prsn + "waiting in front of you.")
+						await ctx.send("<@"+str(id)+">"+" <placeholder> bot dispatched, I will ping you once I start searching! There" + pre + "currently " + str(q.size()) + prsn + "waiting in front of you.")
 					elif self.person.getID() == id:
 						await ctx.send("You are already being served, please wait!")
 				else:
@@ -113,6 +114,7 @@ class RaidCommands(commands.Cog):
 		#and start the dudu client
 		if self.person == None and not q.isEmpty():
 			self.person = q.dequeue()
+			print("Current person being served: " + str(self.person.getUser()))
 			initializeDuduClient()
 
 		#Checks if lanturn is now searching and if there is a person being served
