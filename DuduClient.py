@@ -24,7 +24,7 @@ from NumpadInterpreter import *
 #Get yuor switch IP from the system settings under the internet tab
 #Should be listed under "Connection Status" as 'IP Address'
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(("YOUR SWITCH IP HERE", 6000))
+s.connect(("192.168.0.13", 6000))
 code = ""
 
 def sendCommand(s, content):
@@ -112,31 +112,31 @@ def interpretStringList(arr):
     while i < length:
         sendCmdHelper(s, arr[i])
         i+=1
-        time.sleep(0.5)
+        time.sleep(0.55)
 
 #Calibrated for games set to english
 #Will exit the trade once the timeout period is reached
 def timeOutTradeSearch():
     sendCmdHelper(s, "click Y")
-    time.sleep(0.5)
+    time.sleep(0.55)
     sendCmdHelper(s, "click A")
-    time.sleep(0.5)
+    time.sleep(0.55)
     sendCmdHelper(s, "click A")
-    time.sleep(0.5)
+    time.sleep(0.55)
     sendCmdHelper(s, "click A")
-    time.sleep(0.5)
+    time.sleep(0.55)
     sendCmdHelper(s, "click A")
-    time.sleep(0.5)
+    time.sleep(0.55)
     sendCmdHelper(s, "click A")
-    time.sleep(0.5)
+    time.sleep(0.55)
 
     #uncomment if you are using in Japanese
     #sendCmdHelper(s, "click A")
-    #time.sleep(0.5)
+    #time.sleep(0.55)
     sendCmdHelper(s, "click B")
-    time.sleep(0.5)
+    time.sleep(0.55)
     sendCmdHelper(s, "click B")
-    time.sleep(0.5)
+    time.sleep(0.55)
 
 #Exits trade if a disconnection occured
 #or if the player refused to input a pokemon
@@ -153,51 +153,51 @@ def initiateTrade():
 
     #Gets to the code input menu
     sendCmdHelper(s, "click Y")
-    time.sleep(0.5)
+    time.sleep(0.55)
     sendCmdHelper(s, "click A");
-    time.sleep(0.5)
+    time.sleep(0.55)
     sendCmdHelper(s, "click DDOWN")
-    time.sleep(0.5)
+    time.sleep(0.55)
     sendCmdHelper(s, "click A")
-    time.sleep(0.5)
+    time.sleep(0.55)
     sendCmdHelper(s, "click A")
-    time.sleep(0.5)
+    time.sleep(0.55)
 
     #uncomment if you are using in Japanese
     #sendCmdHelper(s, "click A")
-    #time.sleep(0.5)
+    #time.sleep(0.55)
 
 
     #Get passcode button sequence and input them
     #Pass None if you want your code randomly generated
     #Pass in a 4 digit number not containing any zeros for a fixed code
-    datalist, code = getButtons(4321)
+    datalist, code = getButtons(None)
     interpretStringList(datalist)
 
     #Confirm passcode and exit the menu
     sendCmdHelper(s, "click PLUS")
-    time.sleep(0.5)
+    time.sleep(0.55)
     sendCmdHelper(s, "click A")
-    time.sleep(0.5)
+    time.sleep(0.55)
     sendCmdHelper(s, "click A")
-    time.sleep(0.5)
+    time.sleep(0.55)
     sendCmdHelper(s, "click A")
-    time.sleep(0.5)
+    time.sleep(0.55)
     sendCmdHelper(s, "click A")
-    time.sleep(0.5)
+    time.sleep(0.55)
 
     #Just to be safe since this is a very important part
     sendCommand(s, f"poke 0x2E32209A 0x00000000")
-    time.sleep(0.5)
+    time.sleep(0.55)
     s.recv(689)
     sendCommand(s, f"poke 0x2E32209A 0x00000000")
-    time.sleep(0.5)
+    time.sleep(0.55)
     s.recv(689)
     sendCommand(s, f"poke 0x2E322064 0x00000000")
-    time.sleep(0.5)
+    time.sleep(0.55)
     s.recv(689)
     sendCommand(s, f"poke 0x2E322064 0x00000000")
-    time.sleep(0.5)
+    time.sleep(0.55)
     s.recv(689)
 
 #Start up program and clean up necessary files
