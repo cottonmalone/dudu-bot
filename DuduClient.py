@@ -24,7 +24,7 @@ from NumpadInterpreter import *
 #Get yuor switch IP from the system settings under the internet tab
 #Should be listed under "Connection Status" as 'IP Address'
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(("10.0.0.90", 6000))
+s.connect(("YOUR SWITCH IP HERE", 6000))
 code = ""
 
 def sendCommand(s, content):
