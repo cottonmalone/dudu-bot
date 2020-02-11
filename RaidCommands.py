@@ -8,7 +8,12 @@ from Person import *
 from ArrayQueue import *
 import time
 
-q = ArrayQueue()
+# 300 with the current queue and the reporting system
+# will make sure everyone has a place and can see when they will be served
+# q = ArrayQueue(300)
+
+# until possible merge and improvement, setting it to 20 as from the previous commits
+q = ArrayQueue(20)
 
 class RaidCommands(commands.Cog):
 	def __init__(self, client):
@@ -47,6 +52,19 @@ class RaidCommands(commands.Cog):
 	@commands.command(name="CheckQueueSize")
 	async def checkQueueSize(self, ctx):
 		await ctx.send("Current queue size is: " + str(q.size()))
+
+	#Reports where the sender is in the queue
+	@commands.command(name="CheckMyPlace")
+	async def checkMyPlace(self, ctx):
+		global q
+		id = ctx.message.author.id
+		p = Person(id, ctx.message.channel, ctx.message.author)
+		place = q.indexOf(p) + 1
+
+		if place > 0:
+			await p.send("```python\nHi there! You are currently at the place " + place + ".\n```")
+		else:
+			await p.send("```python\nSorry but you're not in the queue right now.\n```")
 
 	@commands.command(name="CheckMySeed")
 	async def checkMySeed(self, ctx):

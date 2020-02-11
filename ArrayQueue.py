@@ -1,35 +1,42 @@
 
 class ArrayQueue:
-	def __init__(self):
-		self.data = []
-		self.sz = 0
+	def __init__(self, capacity = 20):
+		self._data = []
+		self._size = 0
+		self._capacity = capacity
 
 	def enqueue(self, person):
-		self.sz += 1
-		self.data.insert(0, person)
+		self._size += 1
+		self._data.insert(0, person)
 
 	#return self.sz < max queue size
 	def availableSpace(self):
-		return self.sz < 20
+		return self._size < self.capacity()
 
 	def dequeue(self):
-		self.sz -= 1
-		return self.data.pop()
+		self._size -= 1
+		return self._data.pop()
+
+	def capacity(self):
+		return self._capacity
 
 	def size(self):
-		return self.sz
+		return self._size
 
 	def isEmpty(self):
-		return self.sz == 0
+		return self._size == 0
 
 	def getQueue(self):
-		return self.data
+		return self._data
 
 	def contains(self, person):
+		return self.indexOf(person) >= 0
+
+	def indexOf(self, person):
 		s = self.size()
 		i = 0
 		while i < s:
-			if self.data[i].id == person.id:
-				return True
+			if self._data[i].id == person.id:
+				return i
 			i += 1
-		return False
+		return -1
