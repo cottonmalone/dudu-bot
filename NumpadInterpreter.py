@@ -68,7 +68,7 @@ def getButtons(input):
 	btncmdseq.clear()
 
 	if input == None:
-		input = random.randint(4510, 4520)
+		input = random.randint(1, 9999)
 
 	thousands = int(input / 1000)
 	hundreds = int((input / 100) % 10)
@@ -76,13 +76,13 @@ def getButtons(input):
 	ones = input % 10
 
 	if thousands == 0:
-		thousands = random.randint(4,4)
+		thousands = random.randint(1,9)
 
 	if hundreds == 0:
-		hundreds = random.randint(5,5)
+		hundreds = random.randint(1,9)
 
 	if tens == 0:
-		tens = random.randint(1,1)
+		tens = random.randint(1,9)
 
 	if ones == 0:
 		ones = random.randint(1,9)
