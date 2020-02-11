@@ -24,7 +24,7 @@ from NumpadInterpreter import *
 #Get yuor switch IP from the system settings under the internet tab
 #Should be listed under "Connection Status" as 'IP Address'
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(("192.168.0.13", 6000))
+s.connect(("YOUR SWITCH IP HERE", 6000))
 code = ""
 
 def sendCommand(s, content):
@@ -171,7 +171,7 @@ def initiateTrade():
     #Get passcode button sequence and input them
     #Pass None if you want your code randomly generated
     #Pass in a 4 digit number not containing any zeros for a fixed code
-    datalist, code = getButtons(None)
+    datalist, code = getButtons(1111)
     interpretStringList(datalist)
 
     #Confirm passcode and exit the menu
