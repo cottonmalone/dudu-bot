@@ -1,3 +1,6 @@
+import sys
+
+
 class XoroShiro:
     def __init__(self, seed):
         self.s0 = seed
@@ -22,6 +25,28 @@ class XoroShiro:
         result = self.next() & mask
         while result >= value:
             result = self.next() & mask
+        return result
+
+    def nextIntWithOffser(self, value, mask, offset):
+        result = self.next() & mask
+        while result >= value:
+            result = self.next() & mask
+            offset += 1
+        return result, offset
+
+    def next_with_mask(self, mask):
+        return self.next() & mask
+
+    def next_int(self, mask, max_num=sys.maxsize, offset=None):
+        result = self.next() & mask
+        while result >= max_num:
+            result = self.next() & mask
+            if offset is not None:
+                offset += 1
+
+        if offset is not None:
+            return result, offset
+
         return result
 
     def reset(self, seed):

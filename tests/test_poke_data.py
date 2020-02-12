@@ -5,4 +5,4 @@ def test_poke_data():
 
     data = GetPokeInfo.getPokeInfoString("tests/data/out.pk8")
 
-    print(data)
+    print(f"\n\n```asciidoc\n{data}\n```\n\n")

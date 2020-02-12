@@ -5,6 +5,7 @@ from PK8 import *
 from framecalc import *
 from seedgen import *
 from collections import namedtuple
+import shiny_frames
 
 
 def initializeDuduClient():
@@ -111,8 +112,7 @@ PokeData = namedtuple(
         "pid",
         "seed",
         "seed_found",
-        "star_frame",
-        "square_frame",
+        "frames",
     ],
 )
 
@@ -138,8 +138,7 @@ def getPokeData(file_path=POKE_DATA_FILE_PATH):
 
     if seed_found:
         seed_str = seed[2:]
-        calc = framecalc(seed)
-        star_frame, square_frame = calc.getShinyFrames()
+        frames = shiny_frames.get_shiny_frames(seed)
 
     return PokeData(
         name=data.getPokemonName(),
@@ -152,18 +151,30 @@ def getPokeData(file_path=POKE_DATA_FILE_PATH):
         pid=hex(pid)[2:],
         seed=seed_str,
         seed_found=seed_found,
-        star_frame=star_frame,
-        square_frame=square_frame,
+        frames=frames,
+    )
+
+
+def get_frame_string(frame):
+
+    if frame.type == shiny_frames.ShinyType.STAR:
+        type = "\u2605"
+    else:
+        type = "\u25a1"
+
+    ability = frame.ability
+
+    if ability > 2:
+        ability = "H"
+
+    return (
+        f" {frame.position:4} |   {type}  |"
+        f"  {ability}  | {'/'.join(map(str, frame.ivs))}"
     )
 
 
 def getPokeInfoString(file_path=POKE_DATA_FILE_PATH):
     data = getPokeData(file_path)
-
-    def get_frame_string(frame):
-        if frame == -1:
-            return ">10000"
-        return frame
 
     if data.species != data.name:
         pokemon_name = f"{data.name} ({data.species})"
@@ -185,11 +196,18 @@ def getPokeInfoString(file_path=POKE_DATA_FILE_PATH):
     ]
 
     if data.seed_found:
-        info += [
-            f"Seed      :: {data.seed}",
-            f"\u2605 Shiny @ :: {get_frame_string(data.star_frame)}",
-            f"\u25a1 Shiny @ :: {get_frame_string(data.square_frame)}",
-        ]
+        info.append(f"Seed      :: {data.seed}")
+
+        if len(data.frames):
+            info.append(f"\n--------------------------------------")
+            info.append(f"Frame | Type | Ab. | IVs")
+            info.append(f"--------------------------------------")
+            info += [get_frame_string(frame) for frame in data.frames]
+
+            info.append(f"\n* Shown stats are only for 4 IVs pokemon")
+        else:
+            info.append(f"\nThere are no shiny frames under 10000 frames.")
+
     else:
         info.append("This pokemon is not from a raid.")
 
