@@ -166,7 +166,7 @@ class RaidCommands(commands.Cog):
 
             await self.userChannel.send(
                 self.id
-                + f" I am now searching! I have sent your unique link code as a private message. My in game name is: {BOT_NAME}."
+                + f" I am now searching! I have sent your unique link code as a private message. My IGN is: {settings.get_settings().ign}."
             )
             await self.user.send(
                 "```python\nHi there! Your private link code is: "

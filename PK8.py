@@ -3,6 +3,7 @@ import struct
 storedSize = 0x148
 blockSize = 80
 
+
 class PK8:
     def __init__(self, data):
         self.data = data
@@ -33,40 +34,137 @@ class PK8:
         return self.data
 
     def getBlockPosition(self, index):
-        blocks = [0, 1, 2, 3,
-                0, 1, 3, 2,
-                0, 2, 1, 3,
-                0, 3, 1, 2,
-                0, 2, 3, 1,
-                0, 3, 2, 1,
-                1, 0, 2, 3,
-                1, 0, 3, 2,
-                2, 0, 1, 3,
-                3, 0, 1, 2,
-                2, 0, 3, 1,
-                3, 0, 2, 1,
-                1, 2, 0, 3,
-                1, 3, 0, 2,
-                2, 1, 0, 3,
-                3, 1, 0, 2,
-                2, 3, 0, 1,
-                3, 2, 0, 1,
-                1, 2, 3, 0,
-                1, 3, 2, 0,
-                2, 1, 3, 0,
-                3, 1, 2, 0,
-                2, 3, 1, 0,
-                3, 2, 1, 0,
-
-                #duplicates of 0-7 to eliminate modulus
-                0, 1, 2, 3,
-                0, 1, 3, 2,
-                0, 2, 1, 3,
-                0, 3, 1, 2,
-                0, 2, 3, 1,
-                0, 3, 2, 1,
-                1, 0, 2, 3,
-                1, 0, 3, 2,]
+        blocks = [
+            0,
+            1,
+            2,
+            3,
+            0,
+            1,
+            3,
+            2,
+            0,
+            2,
+            1,
+            3,
+            0,
+            3,
+            1,
+            2,
+            0,
+            2,
+            3,
+            1,
+            0,
+            3,
+            2,
+            1,
+            1,
+            0,
+            2,
+            3,
+            1,
+            0,
+            3,
+            2,
+            2,
+            0,
+            1,
+            3,
+            3,
+            0,
+            1,
+            2,
+            2,
+            0,
+            3,
+            1,
+            3,
+            0,
+            2,
+            1,
+            1,
+            2,
+            0,
+            3,
+            1,
+            3,
+            0,
+            2,
+            2,
+            1,
+            0,
+            3,
+            3,
+            1,
+            0,
+            2,
+            2,
+            3,
+            0,
+            1,
+            3,
+            2,
+            0,
+            1,
+            1,
+            2,
+            3,
+            0,
+            1,
+            3,
+            2,
+            0,
+            2,
+            1,
+            3,
+            0,
+            3,
+            1,
+            2,
+            0,
+            2,
+            3,
+            1,
+            0,
+            3,
+            2,
+            1,
+            0,
+            # duplicates of 0-7 to eliminate modulus
+            0,
+            1,
+            2,
+            3,
+            0,
+            1,
+            3,
+            2,
+            0,
+            2,
+            1,
+            3,
+            0,
+            3,
+            1,
+            2,
+            0,
+            2,
+            3,
+            1,
+            0,
+            3,
+            2,
+            1,
+            1,
+            0,
+            2,
+            3,
+            1,
+            0,
+            3,
+            2,
+        ]
         return blocks[index]
 
     def copyExistingData(self, source, beginning, end, output, outBeginning):
@@ -75,9 +173,9 @@ class PK8:
 
         while i < end:
             output[j] = source[i]
-            j+=1
-            i+=1
-            #print("End: " + str(end) + "\ni: " + str(i))
+            j += 1
+            i += 1
+            # print("End: " + str(end) + "\ni: " + str(i))
 
     def copyData(self, source, beginning, end, output, outBeginning):
         j = outBeginning
@@ -85,8 +183,8 @@ class PK8:
 
         while i < end:
             output.append(source[i])
-            i+=1
-            j+=1
+            i += 1
+            j += 1
 
     def printData(self):
         length = len(self.data)
@@ -97,7 +195,7 @@ class PK8:
             s = s + hex(self.data[x]) + " "
             if (x % 10) == 0 and x != 0:
                 s = s + "\n"
-        #print(s)
+        # print(s)
 
     def ShuffleArray(self, shuffleValue):
         index = shuffleValue * 4
@@ -105,19 +203,23 @@ class PK8:
 
         self.copyData(self.data, 0, storedSize, originalData, 0)
 
-        #print("shuffle array invoked")
+        # print("shuffle array invoked")
         block = 0
         while block < 4:
             offset = self.getBlockPosition(index + block)
-            self.copyExistingData(originalData, 8 + blockSize * offset,
-                8 + blockSize * offset + blockSize, 
-                self.data, 8 + blockSize * block)
+            self.copyExistingData(
+                originalData,
+                8 + blockSize * offset,
+                8 + blockSize * offset + blockSize,
+                self.data,
+                8 + blockSize * block,
+            )
             block += 1
 
         self.printData()
 
     def decrypt(self):
-        if(self.checkEncrypted()):
+        if self.checkEncrypted():
             shuffleValue = (self.getEncryptionConstant() >> 13) & 31
             self.Crypt()
             self.ShuffleArray(shuffleValue)
@@ -146,10 +248,10 @@ class PK8:
 
     def getPSV(self):
         pid = self.getPID()
-        return((pid >> 16 ^ (pid & 0xFFFF)) >> 4)
+        return (pid >> 16 ^ (pid & 0xFFFF)) >> 4
 
     def getTSV(self):
-        return ((self.getTID() ^ self.getSID()) >> 4)
+        return (self.getTID() ^ self.getSID()) >> 4
 
     def isShiny(self):
         return self.getPSV() == self.getTSV()

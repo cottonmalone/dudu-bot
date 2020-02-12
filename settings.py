@@ -11,7 +11,7 @@ DEFAULT_SETTINGS_FILE_PATH = "settings.yaml"
 
 
 Settings = collections.namedtuple(
-    "Settings", ["token", "admin_id", "bot_name", "switch_address"]
+    "Settings", ["token", "admin_id", "bot_name", "switch_address", "ign"]
 )
 
 

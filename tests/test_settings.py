@@ -1,7 +1,11 @@
 from settings import *
 
 EXPECTED_SETTINGS = Settings(
-    token="token", admin_id=666, bot_name="EvilFucker", switch_address="127.0.0.1"
+    token="token",
+    admin_id=666,
+    bot_name="EvilFucker",
+    switch_address="127.0.0.1",
+    ign="Chenel",
 )
 
 
