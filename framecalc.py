@@ -33,7 +33,7 @@ class framecalc:
         starFrame = -1
         squareFrame = -1
 
-        i = 0
+        i = 1
         while True:
             a = rng.nextInt(0xFFFFFFFF, 0xFFFFFFFF)
             SIDTID = rng.nextInt(0xFFFFFFFF, 0xFFFFFFFF)
@@ -41,13 +41,11 @@ class framecalc:
 
             shinyType = self.getShinyType(PID, SIDTID)
 
-            if starFrame == -1:
-                if shinyType == 1:
-                    starFrame = i
+            if starFrame == -1 and shinyType == 1:
+                starFrame = i
 
-            if squareFrame == -1:
-                if shinyType == 2:
-                    squareFrame = i
+            if squareFrame == -1 and shinyType == 2:
+                squareFrame = i
 
             rng.reset(seed)
             seed = rng.next()

@@ -4,6 +4,7 @@ import time
 from PK8 import *
 from framecalc import *
 from seedgen import *
+from collections import namedtuple
 
 
 def initializeDuduClient():
@@ -64,11 +65,11 @@ def checkSearchStatus():
             fileIn.seek(0)
             fileIn.write(bytes(outData))
             fileIn.close()
-            return True
+            return 1
 
-        return False
+        return 0
     except:
-        return False
+        return 0
 
 
 def getCodeString():
@@ -97,20 +98,99 @@ def checkDuduStatus():
         return False
 
 
-def getPokeData():
-    fileIn = open("out.pk8", "rb")
-    pk8 = bytearray(fileIn.read())
-    fileIn.close()
+PokeData = namedtuple(
+    "PokeData",
+    [
+        "name",
+        "species",
+        "nature",
+        "gender",
+        "ot",
+        "ivs",
+        "ec",
+        "pid",
+        "seed",
+        "seed_found",
+        "star_frame",
+        "square_frame",
+    ],
+)
 
-    data = PK8(pk8)
+POKE_DATA_FILE_PATH = "out.pk8"
 
-    ec = data.getEncryptionConstant()
+
+def getPokeData(file_path=POKE_DATA_FILE_PATH):
+    with open(file_path, "rb") as file:
+        data = PK8(file.read())
+
     pid = data.getPID()
-    IV1, IV2, IV3, IV4, IV5, IV6 = data.getIVs()
+    ec = data.getEncryptionConstant()
 
-    iv = [IV1, IV2, IV3, IV5, IV6, IV4]
+    IV1, IV2, IV3, IV4, IV5, IV6 = data.getIVs()
+    ivs = [IV1, IV2, IV3, IV5, IV6, IV4]
 
     gen = seedgen()
-    seed, ivs = gen.search(ec, pid, iv)
+    seed, _ = gen.search(ec, pid, ivs)
 
-    return ec, pid, seed, ivs, iv
+    seed_found = seed != -1
+
+    seed_str, star_frame, square_frame = "", -1, -1
+
+    if seed_found:
+        seed_str = seed[2:]
+        calc = framecalc(seed)
+        star_frame, square_frame = calc.getShinyFrames()
+
+    return PokeData(
+        name=data.getPokemonName(),
+        species=data.getSpecies(),
+        nature=data.getNature(),
+        gender=data.getGender(),
+        ot=data.getOT(),
+        ivs="/".join(map(str, ivs)),
+        ec=hex(ec)[2:],
+        pid=hex(pid)[2:],
+        seed=seed_str,
+        seed_found=seed_found,
+        star_frame=star_frame,
+        square_frame=square_frame,
+    )
+
+
+def getPokeInfoString(file_path=POKE_DATA_FILE_PATH):
+    data = getPokeData(file_path)
+
+    def get_frame_string(frame):
+        if frame == -1:
+            return ">10000"
+        return frame
+
+    if data.species != data.name:
+        pokemon_name = f"{data.name} ({data.species})"
+    else:
+        pokemon_name = data.name
+
+    info = [
+        f"TRADED POKEMON INFO",
+        f"==============================",
+        f"Name      :: {pokemon_name}",
+        f"OT        :: {data.ot}",
+        f"Gender    :: {data.gender}",
+        f"Nature    :: {data.nature}",
+        f"IVs       :: {data.ivs}",
+        f"EC        :: {data.ec}",
+        f"PID       :: {data.pid}",
+        f"\nDEN INFO",
+        f"==============================",
+    ]
+
+    if data.seed_found:
+        info += [
+            f"Seed      :: {data.seed}",
+            f"\u2605 Shiny @ :: {get_frame_string(data.star_frame)}",
+            f"\u25a1 Shiny @ :: {get_frame_string(data.square_frame)}",
+        ]
+    else:
+        info.append("This pokemon is not from a raid.")
+
+    return "\n".join(info)

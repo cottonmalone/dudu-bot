@@ -1,4 +1,5 @@
 import struct
+from PokemonInfoMap import *
 
 storedSize = 0x148
 blockSize = 80
@@ -258,3 +259,26 @@ class PK8:
 
     def isEgg(self):
         return ((self.getIV32() >> 30) & 1) == 1
+
+    def get_string_at(self, address, length):
+        return (
+            self.data[address : address + (length * 2)].decode("utf-16").rstrip("\x00")
+        )
+
+    def get_int(self, address):
+        return int(struct.unpack("H", bytes(self.data[address : address + 2]))[0])
+
+    def getPokemonName(self):
+        return self.get_string_at(0x58, 12)
+
+    def getOT(self):
+        return self.get_string_at(0xF8, 12)
+
+    def getSpecies(self):
+        return get_pokemon_species(self.get_int(0x08))
+
+    def getNature(self):
+        return get_pokemon_nature(self.data[0x20])
+
+    def getGender(self):
+        return get_pokemon_gender((self.data[0x22] >> 2) & 0x3)

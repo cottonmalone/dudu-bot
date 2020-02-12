@@ -9,7 +9,6 @@ from ArrayQueue import *
 import time
 import settings
 
-
 BOT_NAME = settings.get_settings().bot_name
 # 300 with the current queue and the reporting system
 # will make sure everyone has a place and can see when they will be served
@@ -154,7 +153,6 @@ class RaidCommands(commands.Cog):
 
         # Checks if lanturn is now searching and if there is a person being served
         if checkSearchStatus() and self.person != None:
-
             # assigns assets based on the person being served
             self.userChannel = self.person.getUserChannel()
             self.user = self.person.getUser()
@@ -183,126 +181,82 @@ class RaidCommands(commands.Cog):
             )
             self.clearData()
 
-        # Check if a valid user channel is present and if the dudu client is still running
-        if self.userChannel != None and not checkDuduStatus():
+        if checkDuduStatus() == False and self.userChannel != None:
             time.sleep(2.0)
-            ec, pid, seed, ivs, iv = getPokeData()
 
-            if seed != -1:
-                calc = framecalc(seed)
-                starFrame, squareFrame = calc.getShinyFrames()
-
-                starFrameMessage, squareFrameMessage = self.generateFrameString(
-                    starFrame, squareFrame
-                )
-
-                await self.userChannel.send(
-                    self.id
-                    + "```python\nEncryption Constant: "
-                    + str(hex(ec))
-                    + "\nPID: "
-                    + str(hex(pid))
-                    + "\nSeed: "
-                    + seed
-                    + "\nAmount of IVs: "
-                    + str(ivs)
-                    + "\nIVs: "
-                    + str(iv[0])
-                    + "/"
-                    + str(iv[1])
-                    + "/"
-                    + str(iv[2])
-                    + "/"
-                    + str(iv[3])
-                    + "/"
-                    + str(iv[4])
-                    + "/"
-                    + str(iv[5])
-                    + "\nStar Shiny at Frame: "
-                    + starFrameMessage
-                    + "\nSquare Shiny at Frame: "
-                    + squareFrameMessage
-                    + "```"
-                )
-
-                # outputs how many people remain in line
-                time.sleep(1.0)
-                await self.userChannel.send(
-                    "People remaining in line: " + str(q.size())
-                )
-                self.clearData()
-            else:
-                await self.userChannel.send(
-                    "Invalid seed. Please try a different Pokemon. People remaining in line: "
-                    + str(q.size())
-                )
-                self.clearData()
-
-        # await ctx.send("Invoked")
-
-    @commands.command(name="GetSeed")
-    async def obtainSeed(self, ctx, arg1=None, arg2=None, arg3=None):
-        try:
-            # Convert user strings to a usable format (int)
-            ec = int(arg1, 16)
-            pid = int(arg2, 16)
-            ivs = [int(iv) for iv in arg3.split("/")]
-
-            # Generate seed from user input
-            gen = seedgen()
-            seed, ivs = gen.search(ec, pid, ivs)
-
-            # Calculate star and square shiny frames based on seed
-            calc = framecalc(seed)
-            starFrame, squareFrame = calc.getShinyFrames()
-
-            # Format message based on result and output
-            starFrameMessage, squareFrameMessage = self.generateFrameString(
-                starFrame, squareFrame
+            await self.userChannel.send(
+                self.id + f"```asciidoc\n{getPokeInfoString()}\n```"
             )
 
-            await ctx.send(
-                "```python\nRaid seed: "
-                + str(seed)
-                + "\nAmount of IVs: "
-                + str(ivs)
-                + "\nStar Shiny at Frame: "
-                + starFrameMessage
-                + "\nSquare Shiny at Frame: "
-                + squareFrameMessage
-                + "```"
-            )
-        except:
-            await ctx.send(
-                "Please format your input as: ```$GetSeed [Encryption Constant] [PID] [IVs as HP/Atk/Def/SpA/SpD/Spe]```"
-            )
+            self.clearData()
 
-    @commands.command(name="GetFrameData")
-    async def obtainFrameData(self, ctx, arg1=None):
-        try:
-            # Convert user strings to a usable format
-            seed = hex(int(arg1, 16))
+    # await ctx.send("Invoked")
 
-            # Calculate star and square shiny frames based on seed
-            calc = framecalc(seed)
-            starFrame, squareFrame = calc.getShinyFrames()
 
-            # Format message based on result and output
-            starFrameMessage, squareFrameMessage = self.generateFrameString(
-                starFrame, squareFrame
-            )
+@commands.command(name="GetSeed")
+async def obtainSeed(self, ctx, arg1=None, arg2=None, arg3=None):
+    try:
+        # Convert user strings to a usable format (int)
+        ec = int(arg1, 16)
+        pid = int(arg2, 16)
+        ivs = [int(iv) for iv in arg3.split("/")]
 
-            await ctx.send(
-                "```python\nFor Seed: "
-                + str(seed)
-                + "\nStar Shiny at Frame: "
-                + starFrameMessage
-                + "\nSquare Shiny at Frame: "
-                + squareFrameMessage
-                + "```"
-            )
-        except:
-            await ctx.send("```$GetFrameData [Input your Seed]```")
+        # Generate seed from user input
+        gen = seedgen()
+        seed, ivs = gen.search(ec, pid, ivs)
+
+        # Calculate star and square shiny frames based on seed
+        calc = framecalc(seed)
+        starFrame, squareFrame = calc.getShinyFrames()
+
+        # Format message based on result and output
+        starFrameMessage, squareFrameMessage = self.generateFrameString(
+            starFrame, squareFrame
+        )
+
+        await ctx.send(
+            "```python\nRaid seed: "
+            + str(seed)
+            + "\nAmount of IVs: "
+            + str(ivs)
+            + "\nStar Shiny at Frame: "
+            + starFrameMessage
+            + "\nSquare Shiny at Frame: "
+            + squareFrameMessage
+            + "```"
+        )
+    except:
+        await ctx.send(
+            "Please format your input as: ```$GetSeed [Encryption Constant] [PID] [IVs as HP/Atk/Def/SpA/SpD/Spe]```"
+        )
+
+
+@commands.command(name="GetFrameData")
+async def obtainFrameData(self, ctx, arg1=None):
+    try:
+        # Convert user strings to a usable format
+        seed = hex(int(arg1, 16))
+
+        # Calculate star and square shiny frames based on seed
+        calc = framecalc(seed)
+        starFrame, squareFrame = calc.getShinyFrames()
+
+        # Format message based on result and output
+        starFrameMessage, squareFrameMessage = self.generateFrameString(
+            starFrame, squareFrame
+        )
+
+        await ctx.send(
+            "```python\nFor Seed: "
+            + str(seed)
+            + "\nStar Shiny at Frame: "
+            + starFrameMessage
+            + "\nSquare Shiny at Frame: "
+            + squareFrameMessage
+            + "```"
+        )
+    except:
+        await ctx.send("```$GetFrameData [Input your Seed]```")
 
 
 def setup(client):
