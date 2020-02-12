@@ -113,3 +113,5 @@ ENV/
 
 # Mac OS X
 *.DS_Store
+
+settings.yaml
